@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motivation Checklist App</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f2f2f2; }
+    h1 { text-align: center; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    ul { list-style-type: none; padding: 0; }
+    li { margin: 10px 0; display: flex; align-items: center; }
+    button { margin-left: 10px; padding: 5px 10px; border: none; border-radius: 4px; background: #4CAF50; color: white; cursor: pointer; }
+    button:hover { background: #45a049; }
+    .points { font-weight: bold; text-align: center; margin: 10px 0; }
+    #timer { text-align: center; font-size: 1.5em; margin: 10px 0; }
+    input[type='text'] { width: 70%; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Restart - Daily Motivation</h1>
+  <div class="container">
+    <div class="points">Points: <span id="points">0</span></div>
+    <h3>Checklist</h3>
+    <input type="text" id="taskInput" placeholder="Add new task..." />
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+
+    <h3>Timer</h3>
+    <div id="timer">00:00:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <script>
+    let points = 0;
+    let seconds = 0, minutes = 0, hours = 0;
+    let timerInterval;
+
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      if (taskText === "") return;
+
+      const li = document.createElement("li");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.onchange = function() {
+        if (checkbox.checked) {
+          points += 10;
+        } else {
+          points -= 10;
+        }
+        updatePoints();
+      };
+
+      const span = document.createElement("span");
+      span.textContent = " " + taskText;
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      document.getElementById("taskList").appendChild(li);
+      taskInput.value = "";
+    }
+
+    function updatePoints() {
+      document.getElementById("points").textContent = points;
+    }
+
+    function startTimer() {
+      if (!timerInterval) {
+        timerInterval = setInterval(updateTimer, 1000);
+      }
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        points += 20;
+        updatePoints();
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      seconds = 0; minutes = 0; hours = 0;
+      displayTime();
+    }
+
+    function updateTimer() {
+      seconds++;
+      if (seconds === 60) {
+        seconds = 0;
+        minutes++;
+      }
+      if (minutes === 60) {
+        minutes = 0;
+        hours++;
+      }
+      displayTime();
+    }
+
+    function displayTime() {
+      document.getElementById("timer").textContent =
+        (hours < 10 ? "0" + hours : hours) + ":" +
+        (minutes < 10 ? "0" + minutes : minutes) + ":" +
+        (seconds < 10 ? "0" + seconds : seconds);
+    }
+  </script>
+</body>
+</html>
